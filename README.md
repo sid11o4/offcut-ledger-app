@@ -33,6 +33,10 @@ The app expects four tables in the `public` schema: `offcut_inventory`,
 `offcut_unexposed_materials`, `offcut_discard_rules`, `offcut_projects`. See
 `supabase/migrations/` for the schema.
 
+These tables are all `offcut_`-prefixed so the app can share a Supabase project with
+another app without name collisions (it currently shares the `interior-project-tracker`
+project). Its RLS policies scope the `anon` key to the `offcut_` tables only.
+
 ```bash
 npm run dev      # start the dev server
 npm run build     # production build
@@ -42,10 +46,12 @@ npm run lint      # oxlint
 ## Security note
 
 This app has no authentication layer — it's built as a single-user/internal tool, matching
-the original. The Supabase tables use permissive row-level-security policies that grant the
+the original. The `offcut_` tables use permissive row-level-security policies that grant the
 `anon` key full read/write access. Anyone who has the URL and anon key (both are visible in
-client-side code) can read or modify this data. Do not point this at a Supabase project that
-holds anything else you care about, and don't treat the anon key as a secret.
+client-side code) can read or modify the offcut/cutlist data. Those policies are scoped to
+the `offcut_` tables only — they don't affect any other app sharing the same Supabase
+project. Don't treat the anon key as a secret; don't store anything sensitive in these
+tables.
 
 ## Data model
 
